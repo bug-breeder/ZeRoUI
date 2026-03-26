@@ -1,20 +1,50 @@
 /**
  * Column layout helper — auto y-tracking with widget lifecycle.
  *
- * Pre-calculates positions from known heights (token constants).
- * Never reads rendered widget dimensions — avoids zeppos-zui's
- * fatal layout bug where children were always at y=0.
+ * Scrollable mode:
+ *   const col = new Column(zone, { scrollable: true });
+ *   // add items...
+ *   col.finalize();           // must call after all items added
+ *   // on chip selection:
+ *   col.clearContent();       // wipe chips, keep VIEW_CONTAINER z-order
+ *   // re-add items...
+ *   col.finalize();
+ *   // in onDestroy:
+ *   col.destroyAll();         // full teardown
+ *
+ * Non-scrollable mode: API unchanged from before.
  */
 
 import hmUI from '@zos/ui';
 import { COLOR, TYPOGRAPHY, RADIUS, SPACING } from './tokens.js';
 
 export class Column {
-  constructor(zone) {
-    this.x = zone.x;
+  constructor(zone, { scrollable = false } = {}) {
+    this._scrollable = scrollable;
+    this._zone = zone;
+    this._container = null;
+
+    if (scrollable) {
+      // Create the scrollable viewport. Widgets added after this widget and
+      // positioned within its bounds are adopted as scrollable children.
+      // Child widget coordinates are in container-local space (0,0 = top-left
+      // of container, not top-left of screen).
+      this._container = hmUI.createWidget(hmUI.widget.VIEW_CONTAINER, {
+        x: zone.x,
+        y: zone.y,
+        w: zone.w,
+        h: zone.h,
+        scroll_enable: 1,
+      });
+      this.x = 0;
+      this.y = 0;
+    } else {
+      this.x = zone.x;
+      this.y = zone.y;
+    }
+
     this.w = zone.w;
-    this.y = zone.y;
-    this._startY = zone.y;
+    this._startY = this.y;
     this._widgets = [];
   }
 
@@ -25,18 +55,40 @@ export class Column {
     return y;
   }
 
-  // Create widget and track it for destroyAll()
+  // Create widget and track it for clearContent() / destroyAll()
   _create(type, props) {
     const w = hmUI.createWidget(type, props);
     if (w) this._widgets.push(w);
     return w;
   }
 
-  // Delete all widgets created by this Column, reset y to start
-  destroyAll() {
+  // Destroy child widgets only — VIEW_CONTAINER stays alive.
+  // Use this inside rebuild() so VIEW_CONTAINER keeps its original z-order.
+  clearContent() {
     this._widgets.forEach((w) => hmUI.deleteWidget(w));
     this._widgets = [];
     this.y = this._startY;
+  }
+
+  // Full teardown: child widgets + VIEW_CONTAINER.
+  // Call only in page onDestroy(), never inside rebuild().
+  destroyAll() {
+    this.clearContent();
+    if (this._container) {
+      hmUI.deleteWidget(this._container);
+      this._container = null;
+    }
+  }
+
+  // Set VIEW_CONTAINER total scrollable height after all items are added.
+  // Must call after every rebuild when scrollable=true.
+  // VIEW_CONTAINER defaults to viewport height — without finalize(), content
+  // taller than the viewport is silently cut off rather than scrollable.
+  finalize() {
+    if (!this._container) return;
+    this._container.setProperty(hmUI.prop.MORE, {
+      h: Math.max(this.y, this._zone.h),
+    });
   }
 
   sectionLabel(text) {
