@@ -85,7 +85,7 @@ export class Column {
         y,
         w: chipW,
         h,
-        radius: RADIUS.pill,
+        radius: RADIUS.chip,
         normal_color: isSel ? COLOR.PRIMARY_TINT : COLOR.SURFACE,
         press_color: isSel ? COLOR.PRIMARY_PRESSED : COLOR.SURFACE_PRESSED,
         text: String(opt),

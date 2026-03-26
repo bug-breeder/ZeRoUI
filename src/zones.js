@@ -18,6 +18,6 @@ export const ZONE = {
   MAIN: { x: 80, y: 84, w: 320, h: 300 },
 
   // Narrow strip at bottom — primary action button
-  // At y=440 (bottom edge): chord width ≈ 265 > 200 ✓
-  ACTION: { x: 140, y: 392, w: 200, h: 48 },
+  // At y=424 (bottom edge): chord width ≈ 296 > 200 ✓
+  ACTION: { x: 140, y: 376, w: 200, h: 48 },
 };
