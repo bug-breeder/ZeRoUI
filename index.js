@@ -3,7 +3,7 @@
 // import { bg, ZONE, COLOR } from '@bug-breeder/zeroui'  (named)
 
 import { COLOR, TYPOGRAPHY, RADIUS, SPACING } from './src/tokens.js';
-import { ZONE } from './src/zones.js';
+import { ZONE, LAYOUT } from './src/zones.js';
 import { Column } from './src/column.js';
 import {
   bg,
@@ -12,6 +12,7 @@ import {
   actionButton,
   heroText,
   statCard,
+  renderPage,
 } from './src/components.js';
 
 export const UI = {
@@ -22,6 +23,7 @@ export const UI = {
   heroText,
   statCard,
   ZONE,
+  LAYOUT,
   COLOR,
   TYPOGRAPHY,
   RADIUS,
@@ -34,6 +36,7 @@ export {
   RADIUS,
   SPACING,
   ZONE,
+  LAYOUT,
   Column,
   bg,
   title,
@@ -41,4 +44,5 @@ export {
   actionButton,
   heroText,
   statCard,
+  renderPage,
 };
