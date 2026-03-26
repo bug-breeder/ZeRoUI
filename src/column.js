@@ -40,7 +40,7 @@ export class Column {
   }
 
   sectionLabel(text) {
-    const h = 28;
+    const h = 34;
     const y = this._slot(h, SPACING.sm);
     return this._create(hmUI.widget.TEXT, {
       x: this.x,
@@ -55,7 +55,7 @@ export class Column {
   }
 
   chip(text, { selected = false, onPress } = {}) {
-    const h = 44;
+    const h = 48;
     const y = this._slot(h, SPACING.chipGap);
     return this._create(hmUI.widget.BUTTON, {
       x: this.x,
@@ -76,7 +76,7 @@ export class Column {
     const count = options.length;
     const gap = SPACING.sm;
     const chipW = Math.floor((this.w - gap * (count - 1)) / count);
-    const h = 44;
+    const h = 48;
     const y = this._slot(h, SPACING.chipGap);
     return options.map((opt, i) => {
       const isSel = String(opt) === String(selected);

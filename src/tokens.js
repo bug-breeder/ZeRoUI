@@ -33,11 +33,11 @@ export const COLOR = {
 };
 
 export const TYPOGRAPHY = {
-  largeTitle: 48, // hero numbers
-  title: 36, // section titles
-  body: 32, // body text
-  subheadline: 28, // chips, buttons
-  caption: 24, // section labels, hints (minimum legible)
+  largeTitle: 60, // hero numbers
+  title: 44, // section titles
+  body: 40, // body text
+  subheadline: 34, // chips, buttons
+  caption: 30, // section labels, hints (minimum legible)
 };
 
 export const RADIUS = {
@@ -52,6 +52,6 @@ export const SPACING = {
   md: 16,
   lg: 24,
   xl: 32,
-  chipGap: 6, // between stacked chips
-  sectionGap: 12, // after last chip before next section label
+  chipGap: 4, // between stacked chips (reduced to keep setup layout in MAIN zone)
+  sectionGap: 8, // after last chip before next section label
 };
