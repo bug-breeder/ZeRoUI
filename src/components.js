@@ -122,7 +122,7 @@ export function statCard({
 // Layout helper for pages with a scrollable Column.
 // Enforces creation order: column content first (low z), then masks + title + action (high z).
 // buildFn() takes no arguments — access layout via closure (e.g. LAYOUT.FULL.MAIN).
-export function renderPage({ layout, buildFn, title, action }) {
+export function renderPage({ layout, buildFn, title: titleText, action }) {
   // 1. Black background
   hmUI.createWidget(hmUI.widget.FILL_RECT, {
     x: 0,
@@ -147,13 +147,13 @@ export function renderPage({ layout, buildFn, title, action }) {
   }
 
   // 4. Title text (on top of mask)
-  if (title && layout.TITLE) {
+  if (titleText && layout.TITLE) {
     hmUI.createWidget(hmUI.widget.TEXT, {
       x: layout.TITLE.x,
       y: layout.TITLE.y,
       w: layout.TITLE.w,
       h: layout.TITLE.h,
-      text: title,
+      text: titleText,
       text_size: TYPOGRAPHY.subheadline,
       color: COLOR.TEXT,
       align_h: hmUI.align.CENTER_H,
