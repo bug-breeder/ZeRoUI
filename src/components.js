@@ -135,8 +135,9 @@ export function renderPage({ layout, buildFn, title: titleText, action }) {
   // 2. Column content — created first = lowest z-order
   buildFn();
 
-  // 3. Top mask — hides content that scrolls above MAIN into TITLE zone
-  if (layout.TITLE && layout.MAIN) {
+  // 3. Top mask — hides content that scrolls above MAIN.y into the space above
+  //    Gated on MAIN.y > 0 (not layout.TITLE) so NO_TITLE layouts are also protected.
+  if (layout.MAIN && layout.MAIN.y > 0) {
     hmUI.createWidget(hmUI.widget.FILL_RECT, {
       x: 0,
       y: 0,
