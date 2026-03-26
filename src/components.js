@@ -35,8 +35,8 @@ export function title(text) {
 }
 
 // Column layout helper, defaults to MAIN zone
-export function column(zone = ZONE.MAIN) {
-  return new Column(zone);
+export function column(zone = ZONE.MAIN, opts = {}) {
+  return new Column(zone, opts);
 }
 
 // Primary pill button in ACTION zone
@@ -117,4 +117,78 @@ export function statCard({
     })
   );
   return widgets;
+}
+
+// Layout helper for pages with a scrollable Column.
+// Enforces creation order: column content first (low z), then masks + title + action (high z).
+// buildFn() takes no arguments — access layout via closure (e.g. LAYOUT.FULL.MAIN).
+export function renderPage({ layout, buildFn, title, action }) {
+  // 1. Black background
+  hmUI.createWidget(hmUI.widget.FILL_RECT, {
+    x: 0,
+    y: 0,
+    w: 480,
+    h: 480,
+    color: COLOR.BG,
+  });
+
+  // 2. Column content — created first = lowest z-order
+  buildFn();
+
+  // 3. Top mask — hides content that scrolls above MAIN into TITLE zone
+  if (layout.TITLE && layout.MAIN) {
+    hmUI.createWidget(hmUI.widget.FILL_RECT, {
+      x: 0,
+      y: 0,
+      w: 480,
+      h: layout.MAIN.y,
+      color: COLOR.BG,
+    });
+  }
+
+  // 4. Title text (on top of mask)
+  if (title && layout.TITLE) {
+    hmUI.createWidget(hmUI.widget.TEXT, {
+      x: layout.TITLE.x,
+      y: layout.TITLE.y,
+      w: layout.TITLE.w,
+      h: layout.TITLE.h,
+      text: title,
+      text_size: TYPOGRAPHY.subheadline,
+      color: COLOR.TEXT,
+      align_h: hmUI.align.CENTER_H,
+    });
+  }
+
+  // 5. Bottom mask — hides content that scrolls below MAIN
+  //    Gated on layout.MAIN alone (not layout.ACTION) so NO_ACTION pages
+  //    with scroll are also protected.
+  if (layout.MAIN) {
+    const mainBottom = layout.MAIN.y + layout.MAIN.h;
+    hmUI.createWidget(hmUI.widget.FILL_RECT, {
+      x: 0,
+      y: mainBottom,
+      w: 480,
+      h: 480 - mainBottom,
+      color: COLOR.BG,
+    });
+  }
+
+  // 6. Action button — topmost widget
+  if (action && layout.ACTION) {
+    const z = layout.ACTION;
+    hmUI.createWidget(hmUI.widget.BUTTON, {
+      x: z.x,
+      y: z.y,
+      w: z.w,
+      h: z.h,
+      radius: RADIUS.chip,
+      normal_color: COLOR.PRIMARY,
+      press_color: COLOR.PRIMARY_PRESSED,
+      text: action.text,
+      text_size: TYPOGRAPHY.subheadline,
+      color: COLOR.TEXT,
+      click_func: action.onPress,
+    });
+  }
 }
