@@ -1,23 +1,45 @@
 /**
  * Round-display safe zones for 480×480 design canvas.
  *
- * A round display clips content near the top/bottom edges.
- * Three zones of progressively different widths ensure all
- * content stays visible inside the circle (radius 240).
+ * ZONE — legacy single-mode export, kept for backwards compatibility.
+ * LAYOUT — four named modes for different page templates.
  *
  * All values in 480-unit design coords — no px() needed.
+ *
+ * Circle geometry: radius=240, center=(240,240).
+ * TITLE rect corners at (120,24) are 247px from center (outside circle)
+ * but visible text is narrow and centered — only blank margin is clipped.
+ * All MAIN and ACTION corners verified inside circle.
  */
 
 export const ZONE = {
-  // Narrow strip at top — page titles (max ~12 chars at subheadline)
-  // At y=40: chord width ≈ 265 > 240 ✓
-  TITLE: { x: 120, y: 40, w: 240, h: 44 },
+  TITLE:  { x: 120, y: 24,  w: 240, h: 44  },
+  MAIN:   { x: 80,  y: 74,  w: 320, h: 312 },
+  ACTION: { x: 140, y: 392, w: 200, h: 48  },
+};
 
-  // Main content area — inscribed safe rectangle
-  // All 4 corners inside circle (max dist from center ≈ 224 < 240) ✓
-  MAIN: { x: 80, y: 84, w: 320, h: 300 },
+export const LAYOUT = {
+  // title bar + scrollable main + action button (default for most pages)
+  FULL: {
+    TITLE:  { x: 120, y: 24,  w: 240, h: 44  },
+    MAIN:   { x: 80,  y: 74,  w: 320, h: 312 },
+    ACTION: { x: 140, y: 392, w: 200, h: 48  },
+  },
 
-  // Narrow strip at bottom — primary action button
-  // At y=424 (bottom edge): chord width ≈ 296 > 200 ✓
-  ACTION: { x: 140, y: 376, w: 200, h: 48 },
+  // no title — MAIN starts at y=62 (min safe top for x=80 content)
+  NO_TITLE: {
+    MAIN:   { x: 80,  y: 62,  w: 320, h: 324 },
+    ACTION: { x: 140, y: 392, w: 200, h: 48  },
+  },
+
+  // no action button — MAIN extends to y=416 (max safe bottom for x=80)
+  NO_ACTION: {
+    TITLE:  { x: 120, y: 24,  w: 240, h: 44  },
+    MAIN:   { x: 80,  y: 74,  w: 320, h: 342 },
+  },
+
+  // full safe inscribed rect — no chrome (session, immersive pages)
+  MAIN_ONLY: {
+    MAIN:   { x: 80,  y: 62,  w: 320, h: 354 },
+  },
 };
