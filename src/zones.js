@@ -9,7 +9,8 @@
  * Circle geometry: radius=240, center=(240,240).
  * TITLE rect corners at (120,24) are 247px from center (outside circle)
  * but visible text is narrow and centered — only blank margin is clipped.
- * All MAIN and ACTION corners verified inside circle.
+ * All MAIN and ACTION corners in all LAYOUT modes verified inside circle.
+ * MAIN_ONLY corners are 0.7–2.1 px from the circle edge — re-verify geometry if coords change.
  */
 
 export const ZONE = {
