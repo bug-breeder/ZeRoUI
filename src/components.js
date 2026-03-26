@@ -47,7 +47,7 @@ export function actionButton(text, { onPress } = {}) {
     y: z.y,
     w: z.w,
     h: z.h,
-    radius: RADIUS.pill,
+    radius: RADIUS.chip,
     normal_color: COLOR.PRIMARY,
     press_color: COLOR.PRIMARY_PRESSED,
     text,
