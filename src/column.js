@@ -87,7 +87,7 @@ export class Column {
         h,
         radius: RADIUS.pill,
         normal_color: isSel ? COLOR.PRIMARY_TINT : COLOR.SURFACE,
-        press_color: COLOR.SURFACE_PRESSED,
+        press_color: isSel ? COLOR.PRIMARY_PRESSED : COLOR.SURFACE_PRESSED,
         text: String(opt),
         text_size: TYPOGRAPHY.subheadline,
         color: isSel ? COLOR.PRIMARY : COLOR.TEXT,
