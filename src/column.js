@@ -1,7 +1,11 @@
 /**
  * Column layout helper — auto y-tracking with widget lifecycle.
  *
- * Scrollable mode:
+ * Pre-calculates positions from known heights (token constants).
+ * Never reads rendered widget dimensions — avoids zeppos-zui's
+ * fatal layout bug where children were always at y=0.
+ *
+ * Scrollable mode (scrollable=true):
  *   const col = new Column(zone, { scrollable: true });
  *   // add items...
  *   col.finalize();           // must call after all items added
@@ -12,7 +16,8 @@
  *   // in onDestroy:
  *   col.destroyAll();         // full teardown
  *
- * Non-scrollable mode: API unchanged from before.
+ * Non-scrollable mode: API unchanged. clearContent() is safe to call
+ * instead of the old destroyAll() pattern in rebuild loops.
  */
 
 import hmUI from '@zos/ui';
@@ -20,7 +25,6 @@ import { COLOR, TYPOGRAPHY, RADIUS, SPACING } from './tokens.js';
 
 export class Column {
   constructor(zone, { scrollable = false } = {}) {
-    this._scrollable = scrollable;
     this._zone = zone;
     this._container = null;
 
@@ -81,7 +85,7 @@ export class Column {
   }
 
   // Set VIEW_CONTAINER total scrollable height after all items are added.
-  // Must call after every rebuild when scrollable=true.
+  // Must call after every rebuild when scrollable=true. No-op when scrollable=false.
   // VIEW_CONTAINER defaults to viewport height — without finalize(), content
   // taller than the viewport is silently cut off rather than scrollable.
   finalize() {
