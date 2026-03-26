@@ -29,10 +29,9 @@ export class Column {
     this._container = null;
 
     if (scrollable) {
-      // Create the scrollable viewport. Widgets added after this widget and
-      // positioned within its bounds are adopted as scrollable children.
-      // Child widget coordinates are in container-local space (0,0 = top-left
-      // of container, not top-left of screen).
+      // Create the scrollable viewport. Child widgets use ABSOLUTE screen
+      // coordinates (not container-local). VIEW_CONTAINER clips and scrolls
+      // content that falls within its bounds.
       this._container = hmUI.createWidget(hmUI.widget.VIEW_CONTAINER, {
         x: zone.x,
         y: zone.y,
@@ -40,12 +39,11 @@ export class Column {
         h: zone.h,
         scroll_enable: 1,
       });
-      this.x = 0;
-      this.y = 0;
-    } else {
-      this.x = zone.x;
-      this.y = zone.y;
     }
+
+    // Always use absolute screen coordinates — same for scrollable and non-scrollable.
+    this.x = zone.x;
+    this.y = zone.y;
 
     this.w = zone.w;
     this._startY = this.y;
@@ -86,12 +84,13 @@ export class Column {
 
   // Set VIEW_CONTAINER total scrollable height after all items are added.
   // Must call after every rebuild when scrollable=true. No-op when scrollable=false.
-  // VIEW_CONTAINER defaults to viewport height — without finalize(), content
-  // taller than the viewport is silently cut off rather than scrollable.
+  // Uses relative content height (this.y - zone.y) because VIEW_CONTAINER
+  // expects the height of its content, not an absolute screen coordinate.
   finalize() {
     if (!this._container) return;
+    const contentH = this.y - this._zone.y;
     this._container.setProperty(hmUI.prop.MORE, {
-      h: Math.max(this.y, this._zone.h),
+      h: Math.max(contentH, this._zone.h),
     });
   }
 
