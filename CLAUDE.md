@@ -2,6 +2,7 @@
 
 **Package:** `@bug-breeder/zeroui`
 **Purpose:** UI library for ZeppOS round-display apps — design tokens, safe-zone system, Column layout, and hmUI component wrappers.
+**Claude Code plugin (for app devs):** `/plugin marketplace add bug-breeder/zepphyr` then `/plugin install zepphyr@zepphyr`
 
 ---
 
