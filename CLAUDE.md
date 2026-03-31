@@ -137,3 +137,5 @@ col.currentY         // current y position (read-only)
 | `npm install` | Install dev dependencies |
 | `npx eslint src/` | Lint source |
 | `node -e "import('./index.js').then(m => console.log(Object.keys(m)))"` | Verify exports |
+| `npm test` | Run unit tests (Vitest) |
+| `npm run test:watch` | Tests in watch mode |
