@@ -1,17 +1,15 @@
-// ZeRoUI — ZeppOS Rounded UI
-// import { UI } from '@bug-breeder/zeroui'        (namespace)
-// import { bg, ZONE, COLOR } from '@bug-breeder/zeroui'  (named)
+// ZeRoUI v0.2.0 — ZeppOS Rounded UI
+// import { UI } from '@bug-breeder/zeroui'          (namespace)
+// import { renderPage, LAYOUT, COLOR } from '@bug-breeder/zeroui'  (named)
 
-import { COLOR, TYPOGRAPHY, RADIUS, SPACING } from './src/tokens.js';
-import { ZONE, LAYOUT } from './src/zones.js';
+import { COLOR, TYPOGRAPHY, RADIUS, SPACING, configure } from './src/tokens.js';
+import { LAYOUT } from './src/layout.js';
 import { Column } from './src/column.js';
 import {
   bg,
   title,
   column,
   actionButton,
-  heroText,
-  statCard,
   renderPage,
 } from './src/components.js';
 
@@ -20,9 +18,7 @@ export const UI = {
   title,
   column,
   actionButton,
-  heroText,
-  statCard,
-  ZONE,
+  configure,
   LAYOUT,
   COLOR,
   TYPOGRAPHY,
@@ -35,14 +31,12 @@ export {
   TYPOGRAPHY,
   RADIUS,
   SPACING,
-  ZONE,
   LAYOUT,
   Column,
+  configure,
   bg,
   title,
   column,
   actionButton,
-  heroText,
-  statCard,
   renderPage,
 };
