@@ -1,9 +1,17 @@
 {
   "name": "@bug-breeder/zeroui",
   "version": "0.2.0",
+  "type": "module",
   "description": "ZeRoUI — ZeppOS Rounded UI library with safe zones, chips, and layout helpers for round OLED watches",
   "main": "index.js",
   "files": ["index.js", "src/"],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
   "keywords": ["zeppos", "zepp", "watch", "ui", "round", "oled"],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "vitest": "^2.0.0"
+  }
 }
