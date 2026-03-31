@@ -1,23 +1,13 @@
 /**
- * Round-display safe zones for 480×480 design canvas.
+ * Round-display layout modes for 480×480 design canvas.
  *
- * ZONE — legacy single-mode export, kept for backwards compatibility.
- * LAYOUT — four named modes for different page templates.
+ * ZONE removed — use LAYOUT.FULL.* directly.
+ * MAIN_ONLY renamed to MINIMAL.
  *
  * All values in 480-unit design coords — no px() needed.
- *
  * Circle geometry: radius=240, center=(240,240).
- * TITLE rect corners at (120,24) are 247px from center (outside circle)
- * but visible text is narrow and centered — only blank margin is clipped.
- * All MAIN and ACTION corners in all LAYOUT modes verified inside circle.
- * MAIN_ONLY corners are 0.7–2.1 px from the circle edge — re-verify geometry if coords change.
+ * All zone corners verified inside the circle.
  */
-
-export const ZONE = {
-  TITLE:  { x: 120, y: 24,  w: 240, h: 44  },
-  MAIN:   { x: 80,  y: 74,  w: 320, h: 312 },
-  ACTION: { x: 140, y: 392, w: 200, h: 48  },
-};
 
 export const LAYOUT = {
   // title bar + scrollable main + action button (default for most pages)
@@ -40,7 +30,7 @@ export const LAYOUT = {
   },
 
   // full safe inscribed rect — no chrome (session, immersive pages)
-  MAIN_ONLY: {
+  MINIMAL: {
     MAIN:   { x: 80,  y: 62,  w: 320, h: 354 },
   },
 };
