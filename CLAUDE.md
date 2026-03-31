@@ -15,24 +15,32 @@ Plain npm package. No zeus, no ZeppOS app build. Entry point: `index.js`. Source
 ```
 index.js          Re-exports everything (named + UI namespace)
 src/
-  tokens.js       COLOR, TYPOGRAPHY, RADIUS, SPACING
-  zones.js        ZONE (legacy), LAYOUT (4 named modes)
+  tokens.js       COLOR, TYPOGRAPHY, RADIUS, SPACING, configure()
+  layout.js       LAYOUT (4 named modes: FULL, NO_TITLE, NO_ACTION, MINIMAL)
   column.js       Column class — auto y-tracking + widget lifecycle
-  components.js   bg, title, actionButton, heroText, statCard, renderPage
+  page.js         renderPage() — full page layout orchestrator
+  chrome.js       bg, title, actionButton, column factory
 ```
 
 ### Design principles
 
-- **Pre-calculated positions from constants** — never read widget dimensions at runtime (that was zeppos-zui's fatal bug)
+- **Pre-calculated positions from constants** — never read widget dimensions at runtime (avoids fatal zeppos-zui layout bug)
 - **480-unit design coords throughout** — no `px()` calls anywhere in this library
 - **Absolute screen coordinates** — even inside VIEW_CONTAINER (Column always uses screen coords)
+- **renderPage creates the Column** — pass `buildFn: (col) => void`, do NOT create the column before calling renderPage
 
 ### Adding a component
 
-1. Add `export function myComponent(opts = {})` to `src/components.js` (or new `src/<name>.js` if large)
-2. Import tokens from `./tokens.js`, zones from `./zones.js`
-3. `hmUI.createWidget(...)` — return the widget or widget array (pure draw, no state)
-4. In `index.js`: add to both `export { ... }` block and `export const UI = { ... }`
+**Column method** (new row type inside a Column):
+1. Add the method to the `Column` class in `src/column.js`
+2. Use `_slot(h, gapAfter)` for y-tracking, `_create(type, props)` for widget creation
+3. Update `skills/zeroui/references/api.md` in the zepphyr repo
+
+**Standalone component** (page-level, not inside a column):
+1. Add `export function myComponent(opts = {})` to `src/chrome.js`
+2. Import tokens from `./tokens.js`, layout from `./layout.js`
+3. In `index.js`: add to both `export { ... }` block and `export const UI = { ... }`
+4. Update `skills/zeroui/references/api.md` in the zepphyr repo
 
 ### Verify
 
@@ -50,9 +58,18 @@ Consumer apps use `"@bug-breeder/zeroui": "file:../ZeRoUI"` — run `npm install
 ### Import
 
 ```js
-import { renderPage, column, LAYOUT, COLOR, TYPOGRAPHY, RADIUS } from '@bug-breeder/zeroui';
+import { renderPage, LAYOUT, COLOR, TYPOGRAPHY, RADIUS, SPACING, configure } from '@bug-breeder/zeroui';
 import { UI } from '@bug-breeder/zeroui'; // namespace form
 ```
+
+### configure()
+
+```js
+configure({ accent: 'green' })  // presets: 'green'|'blue'|'red'|'orange'|'purple'
+configure({ accent: { primary: 0x007aff, primaryLight: 0x4da3ff, primaryTint: 0x001f4d, primaryPressed: 0x0051d5 } })
+```
+
+Call once in `app.js`. Mutates `COLOR.PRIMARY*` in place — all pages see updated values.
 
 ### LAYOUT modes
 
@@ -61,41 +78,55 @@ import { UI } from '@bug-breeder/zeroui'; // namespace form
 | `LAYOUT.FULL` | TITLE + MAIN + ACTION | most pages |
 | `LAYOUT.NO_TITLE` | MAIN + ACTION | no title bar |
 | `LAYOUT.NO_ACTION` | TITLE + MAIN | no bottom button |
-| `LAYOUT.MAIN_ONLY` | MAIN | fullscreen / immersive |
+| `LAYOUT.MINIMAL` | MAIN | fullscreen / immersive |
 
 ### renderPage()
 
 ```js
-renderPage({
+const col = renderPage({
   layout: LAYOUT.FULL,
-  buildFn() { /* create Column content here — no args */ },
-  title: 'Page Title',          // optional
-  action: { text: 'Go', onPress: () => {} }, // optional
+  buildFn: (col) => {        // column passed in — do NOT create column separately
+    col.label('Section');
+    col.chip('Item', { onPress: () => {} });
+    col.finalize();          // required for scrollable columns
+  },
+  title: 'Page Title',      // optional
+  action: { text: 'Go', onPress: () => {}, variant: 'primary' }, // optional
+  scrollable: true,         // default true
 });
+// returns the Column — store for rebuild use
 ```
 
-Handles z-order: bg → buildFn → top mask → title → bottom mask → action.
+Render order: bg → VIEW_CONTAINER → buildFn → top mask → title → bottom mask → action.
 
-### column() + Column
+### Column methods
 
 ```js
-const col = column(LAYOUT.FULL.MAIN, { scrollable: true });
-col.sectionLabel('Section');
-col.chip('Item', { selected: false, onPress: () => {} });
-col.chipRow(['A', 'B'], { selected: 'A', onPress: (v) => {} });
-col.spacer(16);
-col.finalize();          // REQUIRED for scrollable — sets VIEW_CONTAINER height
+// Text
+col.label(text, { color, align })                  // muted caption header
+col.text(text, { size, color, align, wrap, h })    // body text
+col.heroNumber(value, { color })                   // large centered number
 
-// Rebuild: clearContent() + re-add + finalize()
-// Teardown (onDestroy only): destroyAll()
+// Interactive
+col.chip(text, { selected, onPress, variant })     // variant: 'default'|'primary'|'secondary'|'danger'|'ghost'
+col.chipRow(options[], { selected, onPress, variant })
+
+// Display
+col.card({ title, value, valueColor, h })
+col.progressBar(value, { color, h, radius })       // value: 0.0–1.0
+col.image(src, { w, h })
+
+// Structure
+col.divider({ color, margin })
+col.spacer(n)
+col.widget(type, props, h)                         // escape hatch — raw hmUI widget
+
+// Lifecycle
+col.finalize()       // REQUIRED for scrollable — sets VIEW_CONTAINER height
+col.clearContent()   // in rebuild loops — wipe content, keep VIEW_CONTAINER
+col.destroyAll()     // in onDestroy() only — full teardown
+col.currentY         // current y position (read-only)
 ```
-
-### Key gotchas
-
-- **`finalize()` required** for scrollable columns — missing it breaks scroll
-- **`clearContent()` in rebuilds, `destroyAll()` only in `onDestroy`**
-- **`buildFn` takes no args** — access `col` and `layout` via closure
-- **Use `COLOR` from `@bug-breeder/zeroui`** — do not mix with `utils/constants.js` tokens
 
 ---
 

@@ -5,13 +5,13 @@
 import { COLOR, TYPOGRAPHY, RADIUS, SPACING, configure } from './src/tokens.js';
 import { LAYOUT } from './src/layout.js';
 import { Column } from './src/column.js';
+import { renderPage } from './src/page.js';
 import {
   bg,
   title,
   column,
   actionButton,
-  renderPage,
-} from './src/components.js';
+} from './src/chrome.js';
 
 export const UI = {
   bg,
