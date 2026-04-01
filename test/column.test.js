@@ -152,6 +152,14 @@ describe('Column chipRow() radius and h options', () => {
     col.chipRow(['A', 'B'], { h: 48 });
     expect(col.currentY).toBe(74 + 48 + 6); // 128
   });
+
+  it('explicit h is passed to each widget', () => {
+    const col = new Column(zone);
+    col.chipRow(['A', 'B'], { h: 48 });
+    const calls = hmUI.createWidget.mock.calls;
+    expect(calls[0][1].h).toBe(48);
+    expect(calls[1][1].h).toBe(48);
+  });
 });
 
 // ── Chip variants ─────────────────────────────────────────────────────────────
