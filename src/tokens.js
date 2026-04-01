@@ -41,12 +41,21 @@ export const COLOR = {
   TEXT_DISABLED: 0x3a3a3c,
 };
 
+/**
+ * ZeRoUI design tokens — calibrated for 1.32–1.5" round OLED ZeppOS watches.
+ * Target: Amazfit Balance (1.5", 480×480, 453 PPI) and GTR Mini (1.32", 466×466, 500 PPI).
+ * Design grid: 12-unit base (12, 24, 36, 48, 60, 72, 96, 120, 132…).
+ * All values are ZeppOS design units (designWidth: 480 in app.json).
+ * Physical sizes at 453 PPI (1.5"): caption(36)≈2mm · subheadline(48)≈2.7mm
+ *   body(60)≈3.4mm · title(72)≈4mm · largeTitle(96)≈5.4mm · hero(120)≈6.7mm
+ */
 export const TYPOGRAPHY = {
-  largeTitle: 60,
-  title: 44,
-  body: 40,
-  subheadline: 34,
-  caption: 30,
+  hero:         120,  // was 60 — immersive full-screen numbers (session page)
+  largeTitle:    96,  // was 60 — page title ("Breathe" label)
+  title:         72,  // was 44 — prominent numbers (home streak, stats streak)
+  body:          60,  // was 40 — technique chip labels
+  subheadline:   48,  // was 34 — "day streak", round numbers
+  caption:       36,  // was 30 — section labels, DOW headers
 };
 
 export const RADIUS = {
@@ -56,13 +65,13 @@ export const RADIUS = {
 };
 
 export const SPACING = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
-  chipGap: 4,
-  sectionGap: 8,
+  xs:          6,   // was 4
+  sm:         12,   // was 8
+  md:         24,   // was 16
+  lg:         36,   // was 24
+  xl:         48,   // was 32
+  chipGap:     6,   // was 4 — gap between stacked chips
+  sectionGap: 24,   // was 8 — gap between sections
 };
 
 /**

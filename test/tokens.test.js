@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { COLOR, configure } from '../src/tokens.js';
+import { COLOR, TYPOGRAPHY, SPACING, configure } from '../src/tokens.js';
 
 // Reset to default green accent after every test — configure() mutates COLOR in place
 afterEach(() => configure({ accent: 'green' }));
@@ -52,4 +52,21 @@ describe('COLOR defaults', () => {
   it('BG is 0x000000', () => {
     expect(COLOR.BG).toBe(0x000000);
   });
+});
+
+describe('TYPOGRAPHY values', () => {
+  it('hero is 120', () => { expect(TYPOGRAPHY.hero).toBe(120); });
+  it('largeTitle is 96', () => { expect(TYPOGRAPHY.largeTitle).toBe(96); });
+  it('title is 72', () => { expect(TYPOGRAPHY.title).toBe(72); });
+  it('body is 60', () => { expect(TYPOGRAPHY.body).toBe(60); });
+  it('subheadline is 48', () => { expect(TYPOGRAPHY.subheadline).toBe(48); });
+  it('caption is 36', () => { expect(TYPOGRAPHY.caption).toBe(36); });
+});
+
+describe('SPACING values', () => {
+  it('xs is 6', () => { expect(SPACING.xs).toBe(6); });
+  it('sm is 12', () => { expect(SPACING.sm).toBe(12); });
+  it('md is 24', () => { expect(SPACING.md).toBe(24); });
+  it('chipGap is 6', () => { expect(SPACING.chipGap).toBe(6); });
+  it('sectionGap is 24', () => { expect(SPACING.sectionGap).toBe(24); });
 });
