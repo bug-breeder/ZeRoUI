@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import hmUI from './__mocks__/zos-ui.js';
 import { actionButton, title } from '../src/chrome.js';
 import { LAYOUT } from '../src/layout.js';
-import { COLOR } from '../src/tokens.js';
+import { COLOR, RADIUS } from '../src/tokens.js';
 
 beforeEach(() => vi.clearAllMocks());
 
@@ -29,6 +29,12 @@ describe('actionButton()', () => {
     expect(call[1].y).toBe(LAYOUT.FULL.ACTION.y);
     expect(call[1].w).toBe(LAYOUT.FULL.ACTION.w);
     expect(call[1].h).toBe(LAYOUT.FULL.ACTION.h);
+  });
+
+  it('uses RADIUS.pill (999) for radius', () => {
+    actionButton('Go', { onPress: () => {} });
+    const call = hmUI.createWidget.mock.calls[0];
+    expect(call[1].radius).toBe(RADIUS.pill); // 999
   });
 });
 

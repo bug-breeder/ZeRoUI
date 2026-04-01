@@ -41,7 +41,7 @@ export function actionButton(text, { onPress, variant = 'primary', layout = LAYO
   const pressColor = variant === 'secondary' ? COLOR.SECONDARY_PRESSED : COLOR.PRIMARY_PRESSED;
   return hmUI.createWidget(hmUI.widget.BUTTON, {
     x: z.x, y: z.y, w: z.w, h: z.h,
-    radius: RADIUS.chip,
+    radius: RADIUS.pill,
     normal_color: normalColor,
     press_color: pressColor,
     text,
