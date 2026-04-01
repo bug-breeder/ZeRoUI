@@ -18,43 +18,43 @@ describe('Column y-tracking', () => {
   it('label() advances by caption+4 height plus sm gap', () => {
     const col = new Column(zone);
     col.label('X');
-    expect(col.currentY).toBe(116); // 74 + (30+4) + 8
+    expect(col.currentY).toBe(126); // 74 + (36+4) + 12
   });
 
   it('text() with default size advances by body+4 plus sm gap', () => {
     const col = new Column(zone);
     col.text('X');
-    expect(col.currentY).toBe(126); // 74 + (40+4) + 8
+    expect(col.currentY).toBe(150); // 74 + (60+4) + 12
   });
 
   it('text() with largeTitle size advances by largeTitle+4 plus sm gap', () => {
     const col = new Column(zone);
     col.text('X', { size: 'largeTitle' });
-    expect(col.currentY).toBe(146); // 74 + (60+4) + 8
+    expect(col.currentY).toBe(186); // 74 + (96+4) + 12
   });
 
   it('heroNumber() advances by largeTitle+4 plus sm gap', () => {
     const col = new Column(zone);
     col.heroNumber(42);
-    expect(col.currentY).toBe(146); // 74 + (60+4) + 8
+    expect(col.currentY).toBe(186); // 74 + (96+4) + 12
   });
 
   it('chip() advances by 48 plus chipGap', () => {
     const col = new Column(zone);
     col.chip('X');
-    expect(col.currentY).toBe(126); // 74 + 48 + 4
+    expect(col.currentY).toBe(128); // 74 + 48 + 6
   });
 
   it('chipRow() advances by 48 plus chipGap (one row, any count)', () => {
     const col = new Column(zone);
     col.chipRow(['A', 'B', 'C']);
-    expect(col.currentY).toBe(126); // 74 + 48 + 4
+    expect(col.currentY).toBe(128); // 74 + 48 + 6
   });
 
   it('card() advances by h plus chipGap', () => {
     const col = new Column(zone);
     col.card({ title: 'x', value: '7', h: 80 });
-    expect(col.currentY).toBe(158); // 74 + 80 + 4
+    expect(col.currentY).toBe(160); // 74 + 80 + 6
   });
 
   it('spacer() advances by n with no widget', () => {
@@ -67,13 +67,13 @@ describe('Column y-tracking', () => {
   it('progressBar() advances by barH + 2*sm', () => {
     const col = new Column(zone);
     col.progressBar(0.5);
-    expect(col.currentY).toBe(98); // 74 + 8 + 8*2
+    expect(col.currentY).toBe(106); // 74 + 8 + 12*2
   });
 
   it('divider() advances by 1 + 2*xs', () => {
     const col = new Column(zone);
     col.divider();
-    expect(col.currentY).toBe(83); // 74 + 1 + 4*2
+    expect(col.currentY).toBe(87); // 74 + 1 + 6*2
   });
 
   it('widget() advances by explicit h', () => {
@@ -84,10 +84,10 @@ describe('Column y-tracking', () => {
 
   it('multiple methods accumulate y correctly', () => {
     const col = new Column(zone);
-    col.label('Section');   // +42 → 116
-    col.chip('A');           // +52 → 168
-    col.chip('B');           // +52 → 220
-    expect(col.currentY).toBe(220);
+    col.label('Section');   // +52 → 126
+    col.chip('A');           // +54 → 180
+    col.chip('B');           // +54 → 234
+    expect(col.currentY).toBe(234);
   });
 });
 

@@ -67,6 +67,8 @@ describe('SPACING values', () => {
   it('xs is 6', () => { expect(SPACING.xs).toBe(6); });
   it('sm is 12', () => { expect(SPACING.sm).toBe(12); });
   it('md is 24', () => { expect(SPACING.md).toBe(24); });
+  it('lg is 36', () => { expect(SPACING.lg).toBe(36); });
+  it('xl is 48', () => { expect(SPACING.xl).toBe(48); });
   it('chipGap is 6', () => { expect(SPACING.chipGap).toBe(6); });
   it('sectionGap is 24', () => { expect(SPACING.sectionGap).toBe(24); });
 });
