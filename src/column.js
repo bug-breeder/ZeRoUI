@@ -187,17 +187,16 @@ export class Column {
 
   // Full-width chip button.
   // variant: 'default'|'primary'|'secondary'|'danger'|'ghost'
-  chip(text, { selected = false, onPress, variant = 'default' } = {}) {
-    const h = 48;
+  chip(text, { selected = false, onPress, variant = 'default', radius = RADIUS.chip, h = 120 } = {}) {
     const y = this._slot(h, SPACING.chipGap);
     const { normalColor, pressColor, textColor } = this._chipColors(variant, selected);
     return this._create(hmUI.widget.BUTTON, {
       x: this.x, y, w: this.w, h,
-      radius: RADIUS.chip,
+      radius,
       normal_color: normalColor,
       press_color: pressColor,
       text,
-      text_size: TYPOGRAPHY.subheadline,
+      text_size: TYPOGRAPHY.body,
       color: textColor,
       click_func: onPress,
     });
@@ -205,18 +204,17 @@ export class Column {
 
   // Row of N equal-width chips.
   // variant: 'default'|'primary'|'secondary'|'danger'|'ghost'
-  chipRow(options, { selected, onPress, variant = 'default' } = {}) {
+  chipRow(options, { selected, onPress, variant = 'default', radius = RADIUS.chip, h = 96 } = {}) {
     const count = options.length;
     const gap = SPACING.sm;
     const chipW = Math.floor((this.w - gap * (count - 1)) / count);
-    const h = 48;
     const y = this._slot(h, SPACING.chipGap);
     return options.map((opt, i) => {
       const isSel = variant === 'default' && String(opt) === String(selected);
       const { normalColor, pressColor, textColor } = this._chipColors(variant, isSel);
       return this._create(hmUI.widget.BUTTON, {
         x: this.x + i * (chipW + gap), y, w: chipW, h,
-        radius: RADIUS.chip,
+        radius,
         normal_color: normalColor,
         press_color: pressColor,
         text: String(opt),

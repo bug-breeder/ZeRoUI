@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import hmUI from './__mocks__/zos-ui.js';
 import { Column } from '../src/column.js';
-import { COLOR } from '../src/tokens.js';
+import { COLOR, RADIUS } from '../src/tokens.js';
 
 const zone = { x: 80, y: 74, w: 320, h: 312 };
 
@@ -33,22 +33,28 @@ describe('Column y-tracking', () => {
     expect(col.currentY).toBe(186); // 74 + (96+4) + 12
   });
 
+  it('text() with title size advances by title+4 plus sm gap', () => {
+    const col = new Column(zone);
+    col.text('X', { size: 'title' });
+    expect(col.currentY).toBe(162); // 74 + (72+4) + 12
+  });
+
   it('heroNumber() advances by largeTitle+4 plus sm gap', () => {
     const col = new Column(zone);
     col.heroNumber(42);
     expect(col.currentY).toBe(186); // 74 + (96+4) + 12
   });
 
-  it('chip() advances by 48 plus chipGap', () => {
+  it('chip() default h=120 advances by 120 plus chipGap', () => {
     const col = new Column(zone);
     col.chip('X');
-    expect(col.currentY).toBe(128); // 74 + 48 + 6
+    expect(col.currentY).toBe(200); // 74 + 120 + 6
   });
 
-  it('chipRow() advances by 48 plus chipGap (one row, any count)', () => {
+  it('chipRow() default h=96 advances by 96 plus chipGap (one row, any count)', () => {
     const col = new Column(zone);
     col.chipRow(['A', 'B', 'C']);
-    expect(col.currentY).toBe(128); // 74 + 48 + 6
+    expect(col.currentY).toBe(176); // 74 + 96 + 6
   });
 
   it('card() advances by h plus chipGap', () => {
@@ -85,9 +91,66 @@ describe('Column y-tracking', () => {
   it('multiple methods accumulate y correctly', () => {
     const col = new Column(zone);
     col.label('Section');   // +52 → 126
-    col.chip('A');           // +54 → 180
-    col.chip('B');           // +54 → 234
-    expect(col.currentY).toBe(234);
+    col.chip('A');           // +126 → 252
+    col.chip('B');           // +126 → 378
+    expect(col.currentY).toBe(378);
+  });
+});
+
+// ── chip() radius and h options ───────────────────────────────────────────────
+
+describe('Column chip() radius and h options', () => {
+  it('default radius is RADIUS.chip (12)', () => {
+    const col = new Column(zone);
+    col.chip('X');
+    const call = hmUI.createWidget.mock.calls[0];
+    expect(call[1].radius).toBe(12);
+  });
+
+  it('explicit radius is passed to widget', () => {
+    const col = new Column(zone);
+    col.chip('X', { radius: 999 });
+    const call = hmUI.createWidget.mock.calls[0];
+    expect(call[1].radius).toBe(999);
+  });
+
+  it('explicit h overrides default for y-tracking', () => {
+    const col = new Column(zone);
+    col.chip('X', { h: 48 });
+    expect(col.currentY).toBe(74 + 48 + 6); // 128
+  });
+
+  it('explicit h is passed to widget', () => {
+    const col = new Column(zone);
+    col.chip('X', { h: 48 });
+    const call = hmUI.createWidget.mock.calls[0];
+    expect(call[1].h).toBe(48);
+  });
+});
+
+// ── chipRow() radius and h options ────────────────────────────────────────────
+
+describe('Column chipRow() radius and h options', () => {
+  it('default radius is RADIUS.chip (12)', () => {
+    const col = new Column(zone);
+    col.chipRow(['A', 'B']);
+    const calls = hmUI.createWidget.mock.calls;
+    expect(calls[0][1].radius).toBe(12);
+    expect(calls[1][1].radius).toBe(12);
+  });
+
+  it('explicit radius is applied to all chips', () => {
+    const col = new Column(zone);
+    col.chipRow(['A', 'B'], { radius: 999 });
+    const calls = hmUI.createWidget.mock.calls;
+    expect(calls[0][1].radius).toBe(999);
+    expect(calls[1][1].radius).toBe(999);
+  });
+
+  it('explicit h overrides default for y-tracking', () => {
+    const col = new Column(zone);
+    col.chipRow(['A', 'B'], { h: 48 });
+    expect(col.currentY).toBe(74 + 48 + 6); // 128
   });
 });
 
@@ -147,9 +210,9 @@ describe('Column chipRow selected logic', () => {
     const col = new Column(zone);
     col.chipRow(['1', '2', '3'], { selected: '2', variant: 'default' });
     const calls = hmUI.createWidget.mock.calls;
-    expect(calls[0][1].normal_color).toBe(COLOR.SURFACE);        // '1' unselected
-    expect(calls[1][1].normal_color).toBe(COLOR.PRIMARY_TINT);   // '2' selected
-    expect(calls[2][1].normal_color).toBe(COLOR.SURFACE);        // '3' unselected
+    expect(calls[0][1].normal_color).toBe(COLOR.SURFACE);
+    expect(calls[1][1].normal_color).toBe(COLOR.PRIMARY_TINT);
+    expect(calls[2][1].normal_color).toBe(COLOR.SURFACE);
   });
 
   it('primary variant: all chips use PRIMARY regardless of selected', () => {
@@ -210,7 +273,7 @@ describe('Column lifecycle', () => {
     col.chip('A');
     col.chip('B');
     col.chip('C');
-    vi.clearAllMocks(); // reset counts before clearContent
+    vi.clearAllMocks();
     col.clearContent();
     expect(hmUI.deleteWidget).toHaveBeenCalledTimes(3);
   });
@@ -219,7 +282,6 @@ describe('Column lifecycle', () => {
     const col = new Column(zone, { scrollable: true });
     col.chip('A');
     col.finalize();
-    // VIEW_CONTAINER is the first createWidget call in a scrollable column
     const container = hmUI.createWidget.mock.results[0].value;
     expect(container.setProperty).toHaveBeenCalledWith('MORE', {
       h: expect.any(Number),
@@ -228,17 +290,16 @@ describe('Column lifecycle', () => {
 
   it('scrollable: finalize() sets h >= zone.h', () => {
     const col = new Column(zone, { scrollable: true });
-    col.finalize(); // no content — h should be at least zone.h
+    col.finalize();
     const container = hmUI.createWidget.mock.results[0].value;
     const callArgs = container.setProperty.mock.calls[0];
     expect(callArgs[1].h).toBeGreaterThanOrEqual(zone.h);
   });
 
   it('non-scrollable: finalize() is a no-op', () => {
-    const col = new Column(zone); // non-scrollable — no VIEW_CONTAINER
+    const col = new Column(zone);
     col.chip('A');
     col.finalize();
-    // The chip widget should not have had setProperty called on it
     const chipWidget = hmUI.createWidget.mock.results[0].value;
     expect(chipWidget.setProperty).not.toHaveBeenCalled();
   });
