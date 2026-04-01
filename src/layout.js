@@ -1,7 +1,11 @@
 /**
  * Round-display layout modes for 480×480 design canvas.
- * Calibrated for 1.32–1.5" round OLED ZeppOS watches.
- * ACTION zone arc safety: at y=456 (384+72), half-chord≈105px > half-width 96px ✓
+ * Calibrated for 1.32–1.5" round OLED ZeppOS watches. Design grid: 12-unit base.
+ *
+ * Arc geometry (circle r=240, center=240):
+ *   y=60 / y=420: ~1px outside the inscribed rect at x=80 — safe because OLED clips at
+ *   the circle boundary and content at x=80 is never visible past the arc anyway.
+ *   ACTION zone at y=456 (384+72): half-chord≈105px > half-width 96px ✓
  */
 
 export const LAYOUT = {

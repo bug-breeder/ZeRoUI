@@ -38,6 +38,10 @@ describe('LAYOUT.NO_ACTION', () => {
     expect(LAYOUT.NO_ACTION.TITLE).toBeDefined();
     expect(LAYOUT.NO_ACTION.MAIN).toBeDefined();
   });
+
+  it('MAIN zone has correct coordinates', () => {
+    expect(LAYOUT.NO_ACTION.MAIN).toEqual({ x: 80, y: 84, w: 320, h: 336 });
+  });
 });
 
 describe('LAYOUT.NO_TITLE', () => {
