@@ -1,36 +1,31 @@
 /**
  * Round-display layout modes for 480×480 design canvas.
- *
- * ZONE removed — use LAYOUT.FULL.* directly.
- * MAIN_ONLY renamed to MINIMAL.
- *
- * All values in 480-unit design coords — no px() needed.
- * Circle geometry: radius=240, center=(240,240).
- * All zone corners verified inside the circle.
+ * Calibrated for 1.32–1.5" round OLED ZeppOS watches.
+ * ACTION zone arc safety: at y=456 (384+72), half-chord≈105px > half-width 96px ✓
  */
 
 export const LAYOUT = {
-  // title bar + scrollable main + action button (default for most pages)
+  // title bar + scrollable main + action button
   FULL: {
-    TITLE:  { x: 120, y: 24,  w: 240, h: 44  },
-    MAIN:   { x: 80,  y: 74,  w: 320, h: 312 },
-    ACTION: { x: 140, y: 392, w: 200, h: 48  },
+    TITLE:  { x: 120, y: 24,  w: 240, h: 48  },
+    MAIN:   { x: 80,  y: 84,  w: 320, h: 288 },
+    ACTION: { x: 144, y: 384, w: 192, h: 72  },
   },
 
-  // no title — MAIN starts at y=62 (min safe top for x=80 content)
+  // no title — MAIN starts at y=60
   NO_TITLE: {
-    MAIN:   { x: 80,  y: 62,  w: 320, h: 324 },
-    ACTION: { x: 140, y: 392, w: 200, h: 48  },
+    MAIN:   { x: 80,  y: 60,  w: 320, h: 312 },
+    ACTION: { x: 144, y: 384, w: 192, h: 72  },
   },
 
-  // no action button — MAIN extends to y=416 (max safe bottom for x=80)
+  // no action button
   NO_ACTION: {
-    TITLE:  { x: 120, y: 24,  w: 240, h: 44  },
-    MAIN:   { x: 80,  y: 74,  w: 320, h: 342 },
+    TITLE:  { x: 120, y: 24,  w: 240, h: 48  },
+    MAIN:   { x: 80,  y: 84,  w: 320, h: 336 },
   },
 
-  // full safe inscribed rect — no chrome (session, immersive pages)
+  // no chrome — full safe inscribed rect (home, session)
   MINIMAL: {
-    MAIN:   { x: 80,  y: 62,  w: 320, h: 354 },
+    MAIN:   { x: 80,  y: 60,  w: 320, h: 360 },
   },
 };

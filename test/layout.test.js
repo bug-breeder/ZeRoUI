@@ -3,21 +3,21 @@ import { LAYOUT } from '../src/layout.js';
 
 describe('LAYOUT.FULL', () => {
   it('MAIN zone has correct coordinates', () => {
-    expect(LAYOUT.FULL.MAIN).toEqual({ x: 80, y: 74, w: 320, h: 312 });
+    expect(LAYOUT.FULL.MAIN).toEqual({ x: 80, y: 84, w: 320, h: 288 });
   });
 
   it('TITLE zone has correct coordinates', () => {
-    expect(LAYOUT.FULL.TITLE).toEqual({ x: 120, y: 24, w: 240, h: 44 });
+    expect(LAYOUT.FULL.TITLE).toEqual({ x: 120, y: 24, w: 240, h: 48 });
   });
 
   it('ACTION zone has correct coordinates', () => {
-    expect(LAYOUT.FULL.ACTION).toEqual({ x: 140, y: 392, w: 200, h: 48 });
+    expect(LAYOUT.FULL.ACTION).toEqual({ x: 144, y: 384, w: 192, h: 72 });
   });
 });
 
 describe('LAYOUT.MINIMAL', () => {
   it('MAIN zone has correct coordinates', () => {
-    expect(LAYOUT.MINIMAL.MAIN).toEqual({ x: 80, y: 62, w: 320, h: 354 });
+    expect(LAYOUT.MINIMAL.MAIN).toEqual({ x: 80, y: 60, w: 320, h: 360 });
   });
 
   it('has no TITLE zone', () => {
@@ -48,5 +48,13 @@ describe('LAYOUT.NO_TITLE', () => {
   it('has MAIN and ACTION zones', () => {
     expect(LAYOUT.NO_TITLE.MAIN).toBeDefined();
     expect(LAYOUT.NO_TITLE.ACTION).toBeDefined();
+  });
+
+  it('MAIN zone has correct coordinates', () => {
+    expect(LAYOUT.NO_TITLE.MAIN).toEqual({ x: 80, y: 60, w: 320, h: 312 });
+  });
+
+  it('ACTION zone has correct coordinates', () => {
+    expect(LAYOUT.NO_TITLE.ACTION).toEqual({ x: 144, y: 384, w: 192, h: 72 });
   });
 });
