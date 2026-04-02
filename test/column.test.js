@@ -148,6 +148,27 @@ describe('Column chip() radius and h options', () => {
     col.chip('X', { w: 192 });
     expect(col.currentY).toBe(200); // 74 + 120 + 6 — same as without w
   });
+
+  it('text_size is capped at h when h < TYPOGRAPHY.body', () => {
+    const col = new Column(zone);
+    col.chip('X', { h: 48 });
+    const call = hmUI.createWidget.mock.calls[0];
+    expect(call[1].text_size).toBe(48); // Math.min(60, 48) = 48
+  });
+
+  it('text_size is TYPOGRAPHY.body when h >= TYPOGRAPHY.body', () => {
+    const col = new Column(zone);
+    col.chip('X', { h: 72 });
+    const call = hmUI.createWidget.mock.calls[0];
+    expect(call[1].text_size).toBe(60); // Math.min(60, 72) = 60
+  });
+
+  it('text_size is TYPOGRAPHY.body when h is default (120)', () => {
+    const col = new Column(zone);
+    col.chip('X');
+    const call = hmUI.createWidget.mock.calls[0];
+    expect(call[1].text_size).toBe(60); // Math.min(60, 120) = 60
+  });
 });
 
 // ── chipRow() radius and h options ────────────────────────────────────────────
@@ -224,11 +245,12 @@ describe('Column chip variants', () => {
     expect(call[1].color).toBe(COLOR.DANGER);
   });
 
-  it('ghost variant uses BG background and TEXT_MUTED text', () => {
+  it('ghost variant uses SURFACE background and TEXT_MUTED text', () => {
     const col = new Column(zone);
     col.chip('X', { variant: 'ghost' });
     const call = hmUI.createWidget.mock.calls[0];
-    expect(call[1].normal_color).toBe(COLOR.BG);
+    expect(call[1].normal_color).toBe(COLOR.SURFACE);
+    expect(call[1].press_color).toBe(COLOR.SURFACE_PRESSED);
     expect(call[1].color).toBe(COLOR.TEXT_MUTED);
   });
 });

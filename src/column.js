@@ -99,7 +99,7 @@ export class Column {
       case 'danger':
         return { normalColor: 0x3d0000, pressColor: 0xc73d3d, textColor: COLOR.DANGER };
       case 'ghost':
-        return { normalColor: COLOR.BG, pressColor: COLOR.SURFACE, textColor: COLOR.TEXT_MUTED };
+        return { normalColor: COLOR.SURFACE, pressColor: COLOR.SURFACE_PRESSED, textColor: COLOR.TEXT_MUTED };
       default: // 'default' — selected state applies
         return selected
           ? { normalColor: COLOR.PRIMARY_TINT, pressColor: COLOR.PRIMARY_PRESSED, textColor: COLOR.PRIMARY }
@@ -198,7 +198,7 @@ export class Column {
       normal_color: normalColor,
       press_color: pressColor,
       text,
-      text_size: TYPOGRAPHY.body,
+      text_size: Math.min(TYPOGRAPHY.body, h),
       color: textColor,
       click_func: onPress,
     });
