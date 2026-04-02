@@ -59,8 +59,13 @@ function inferLayout(widgets) {
 
   const titleWidget =
     widgets.find((w) => w._type === 'TEXT' && (w.y || 0) < mainY && w._visible !== false) || null;
-  const actionWidget =
-    widgets.find((w) => w._type === 'BUTTON' && (w.y || 0) >= mainBottom && w._visible !== false) || null;
+
+  // actionWidget: renderPage draws the action button AFTER the bottom mask in z-order.
+  // Search only after bottomMask to avoid matching scrollable chips that also sit at y >= mainBottom.
+  const bottomMaskIdx = bottomMask ? widgets.indexOf(bottomMask) : -1;
+  const actionWidget = bottomMaskIdx >= 0
+    ? widgets.slice(bottomMaskIdx + 1).find((w) => w._type === 'BUTTON' && w._visible !== false) || null
+    : null;
 
   // maxScroll: how far content can scroll before the last widget is fully visible
   let maxScroll = 0;
