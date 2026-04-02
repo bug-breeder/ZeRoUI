@@ -187,11 +187,13 @@ export class Column {
 
   // Full-width chip button.
   // variant: 'default'|'primary'|'secondary'|'danger'|'ghost'
-  chip(text, { selected = false, onPress, variant = 'default', radius = RADIUS.chip, h = 120 } = {}) {
+  chip(text, { selected = false, onPress, variant = 'default', radius = RADIUS.chip, h = 120, w: chipW } = {}) {
+    const w = chipW !== undefined ? Math.min(chipW, this.w) : this.w;
+    const x = this.x + Math.floor((this.w - w) / 2);
     const y = this._slot(h, SPACING.chipGap);
     const { normalColor, pressColor, textColor } = this._chipColors(variant, selected);
     return this._create(hmUI.widget.BUTTON, {
-      x: this.x, y, w: this.w, h,
+      x, y, w, h,
       radius,
       normal_color: normalColor,
       press_color: pressColor,

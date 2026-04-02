@@ -126,6 +126,28 @@ describe('Column chip() radius and h options', () => {
     const call = hmUI.createWidget.mock.calls[0];
     expect(call[1].h).toBe(48);
   });
+
+  it('explicit w centers the button within the column', () => {
+    const col = new Column(zone); // zone.x=80, zone.w=320
+    col.chip('X', { w: 192 });
+    const call = hmUI.createWidget.mock.calls[0];
+    expect(call[1].w).toBe(192);
+    expect(call[1].x).toBe(144); // 80 + Math.floor((320-192)/2) = 80+64=144
+  });
+
+  it('w larger than column width is clamped to column width', () => {
+    const col = new Column(zone);
+    col.chip('X', { w: 999 });
+    const call = hmUI.createWidget.mock.calls[0];
+    expect(call[1].w).toBe(320);
+    expect(call[1].x).toBe(80); // no offset when w === column width
+  });
+
+  it('y-tracking is unaffected by w option', () => {
+    const col = new Column(zone);
+    col.chip('X', { w: 192 });
+    expect(col.currentY).toBe(200); // 74 + 120 + 6 — same as without w
+  });
 });
 
 // ── chipRow() radius and h options ────────────────────────────────────────────
