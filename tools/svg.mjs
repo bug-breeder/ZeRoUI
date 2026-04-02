@@ -34,7 +34,7 @@ function renderWidget(w) {
   // OLED behaviour: black pixels are physically off — don't render black FILL_RECTs.
   // This correctly shows content (e.g. heatmap row 4) that the mask "hides" on LCD but
   // is actually visible through the black pixels on OLED.
-  if (w._type === 'FILL_RECT' && (w.color === 0 || w.color === 0x000000) && w.w < 460) return '';
+  if (w._type === 'FILL_RECT' && (w.color === 0 || w.color === 0x000000) && w.w < 460) return ''; // full-width (≥460) masks render solid to hide overflow
 
   // Respect visibility changes from setProperty('VISIBLE', false)
   if (w._visible === false) return '';
