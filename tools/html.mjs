@@ -12,7 +12,7 @@
 
 /** Convert a ZeppOS hex color integer to CSS hex string (#rrggbb). */
 function hexColor(n) {
-  if (n === undefined || n === null) return '#000000';
+  if (n === undefined || n === null) return '#000000'; // Canvas has no 'none' — fall back to black
   return '#' + ((n >>> 0) & 0xffffff).toString(16).padStart(6, '0');
 }
 
@@ -88,6 +88,23 @@ function serializeWidgets(widgets) {
 }
 
 /**
+ * Escape </script> sequences in a JSON string for safe HTML embedding.
+ * Prevents early script-tag closure when widget text contains "</script>".
+ */
+function escapeForScript(json) {
+  return json.replace(/<\/script>/gi, '<\\/script>');
+}
+
+/** Escape HTML special characters for use in HTML text content. */
+function esc(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
  * Render a list of ZeppOS widgets to a self-contained HTML string.
  * @param {object[]} widgets  - Array of widget objects from the hmUI mock.
  * @param {object}   options
@@ -101,7 +118,7 @@ export function widgetsToHTML(widgets, { label = '', pageSlug = '' } = {}) {
     titleWidget, actionWidget, maxScroll,
   } = inferLayout(widgets);
 
-  const widgetsJSON = serializeWidgets(widgets);
+  const widgetsJSON = escapeForScript(serializeWidgets(widgets));
   const scrollHint = scrollable ? ' \u2014 scroll to see full content' : '';
   const cursor = scrollable ? 'grab' : 'default';
 
@@ -110,7 +127,7 @@ export function widgetsToHTML(widgets, { label = '', pageSlug = '' } = {}) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${pageSlug || 'preview'} \u2014 ZeRoUI preview</title>
+  <title>${esc(pageSlug) || 'preview'} \u2014 ZeRoUI preview</title>
   <style>
     body { margin: 0; background: #0d0d0d; display: flex; flex-direction: column; align-items: center; padding: 32px; font-family: system-ui, sans-serif; }
     canvas { border-radius: 50%; cursor: ${cursor}; display: block; box-shadow: 0 0 0 2px #2a2a2a; }
@@ -119,7 +136,7 @@ export function widgetsToHTML(widgets, { label = '', pageSlug = '' } = {}) {
 </head>
 <body>
   <canvas id="watch" width="480" height="480"></canvas>
-  <p class="info">${label}${scrollHint}</p>
+  <p class="info">${esc(label)}${scrollHint}</p>
 <script>
 const WIDGETS = ${widgetsJSON};
 const MAIN_X = ${mainX}, MAIN_Y = ${mainY}, MAIN_W = ${mainW}, MAIN_H = ${mainH};
@@ -127,14 +144,14 @@ const MAIN_BOTTOM = ${mainBottom};
 const SC_START = ${scStart}, SC_END = ${scEnd};
 const SCROLLABLE = ${scrollable};
 const MAX_SCROLL = ${maxScroll};
-const TITLE_WIDGET = ${JSON.stringify(titleWidget)};
-const ACTION_WIDGET = ${JSON.stringify(actionWidget)};
+const TITLE_WIDGET = ${escapeForScript(JSON.stringify(titleWidget))};
+const ACTION_WIDGET = ${escapeForScript(JSON.stringify(actionWidget))};
 
 const canvas = document.getElementById('watch');
 const ctx = canvas.getContext('2d');
 
 function hexColor(n) {
-  if (n === undefined || n === null) return '#000000';
+  if (n === undefined || n === null) return '#000000'; // Canvas has no 'none' — fall back to black
   return '#' + ((n >>> 0) & 0xffffff).toString(16).padStart(6, '0');
 }
 
@@ -194,7 +211,7 @@ function drawArc(ctx, w) {
   ctx.strokeStyle = hexColor(w.color);
   ctx.lineWidth = lw;
   ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.arc(cx, cy, r, 0, Math.PI * 2); // TODO: start_angle/end_angle not yet implemented — renders full circle
   ctx.stroke();
 }
 
@@ -238,26 +255,26 @@ function drawOverlay(ctx) {
   if (TITLE_WIDGET) {
     ctx.setLineDash([6, 4]);
     ctx.strokeStyle = '#ff9f0a88';
-    ctx.strokeRect(TITLE_WIDGET.x, TITLE_WIDGET.y, TITLE_WIDGET.w, TITLE_WIDGET.h);
+    ctx.strokeRect(TITLE_WIDGET.x || 0, TITLE_WIDGET.y || 0, TITLE_WIDGET.w || 0, TITLE_WIDGET.h || 0);
     ctx.setLineDash([]);
     ctx.fillStyle = '#ff9f0a99';
     ctx.font = '11px system-ui, sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-    ctx.fillText('TITLE', TITLE_WIDGET.x + 4, TITLE_WIDGET.y + 4);
+    ctx.fillText('TITLE', (TITLE_WIDGET.x || 0) + 4, (TITLE_WIDGET.y || 0) + 4);
   }
 
   // ACTION zone
   if (ACTION_WIDGET) {
     ctx.setLineDash([6, 4]);
     ctx.strokeStyle = '#007aff88';
-    ctx.strokeRect(ACTION_WIDGET.x, ACTION_WIDGET.y, ACTION_WIDGET.w, ACTION_WIDGET.h);
+    ctx.strokeRect(ACTION_WIDGET.x || 0, ACTION_WIDGET.y || 0, ACTION_WIDGET.w || 0, ACTION_WIDGET.h || 0);
     ctx.setLineDash([]);
     ctx.fillStyle = '#007aff99';
     ctx.font = '11px system-ui, sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-    ctx.fillText('ACTION', ACTION_WIDGET.x + 4, ACTION_WIDGET.y + 4);
+    ctx.fillText('ACTION', (ACTION_WIDGET.x || 0) + 4, (ACTION_WIDGET.y || 0) + 4);
   }
 
   // Scroll indicator on right edge of MAIN zone
