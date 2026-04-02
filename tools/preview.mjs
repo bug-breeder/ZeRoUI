@@ -2,9 +2,9 @@
  * ZeRoUI page preview tool.
  *
  * Runs a ZeppOS page's lifecycle (onInit → build) with mocked @zos/* APIs,
- * records every hmUI.createWidget call, and renders the result to an SVG.
- * Catches layout bugs — ghost chips, text overflow, circle clipping — before
- * they reach the simulator.
+ * records every hmUI.createWidget call, and renders the result to an HTML
+ * Canvas 2D preview. Catches layout bugs — ghost chips, text overflow, circle
+ * clipping — before they reach the simulator.
  *
  * Usage (from your ZeppOS app directory):
  *   node --no-warnings --loader ../ZeRoUI/tools/loader.mjs \
@@ -20,11 +20,8 @@
  *   "preview-page": "node --no-warnings --loader ../ZeRoUI/tools/loader.mjs ../ZeRoUI/tools/preview.mjs"
  *
  * Output:
- *   /tmp/zepp-preview-[page].svg  — open in any browser
- *
- * To convert to PNG (macOS, then readable by Claude's image tool):
- *   qlmanage -t -s 480 -o /tmp /tmp/zepp-preview-[page].svg
- *   # Output: /tmp/zepp-preview-[page].svg.png
+ *   /tmp/zepp-preview-[page].html  — open in any browser (open /tmp/zepp-preview-[page].html)
+ *   Scrollable pages support wheel/touch scroll inside the circular watch face.
  *
  * Seed data (streak, session history, etc.) comes from tools/mocks/zos-storage.mjs.
  * Edit that file to preview different data states.
