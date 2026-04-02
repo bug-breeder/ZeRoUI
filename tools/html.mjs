@@ -277,8 +277,8 @@ function drawOverlay(ctx) {
     ctx.fillText('ACTION', (ACTION_WIDGET.x || 0) + 4, (ACTION_WIDGET.y || 0) + 4);
   }
 
-  // Scroll indicator on right edge of MAIN zone
-  if (SCROLLABLE) {
+  // Scroll indicator on right edge of MAIN zone — only when content actually overflows
+  if (SCROLLABLE && MAX_SCROLL > 0) {
     ctx.fillStyle = '#30d158bb';
     ctx.font = '22px system-ui, sans-serif';
     ctx.textAlign = 'center';
