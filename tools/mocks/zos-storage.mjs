@@ -17,10 +17,12 @@ const SEED = {
 };
 
 export class LocalStorage {
-  getItem(key, defaultValue) {
-    // utils/storage.js may prefix keys with 'dev_' when DEV_MODE is true
+  // Intentionally no defaultValue param — real ZeppOS getItem() ignores it.
+  // Callers must use:  s.getItem(key) ?? defaultValue
+  // NOT:              s.getItem(key, defaultValue)   ← silently broken on device
+  getItem(key) {
     const base = key.startsWith('dev_') ? key.slice(4) : key;
-    return base in SEED ? SEED[base] : defaultValue;
+    return base in SEED ? SEED[base] : undefined;
   }
 
   setItem() {}

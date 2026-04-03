@@ -175,6 +175,12 @@ function drawFillRect(ctx, w) {
 
 function drawText(ctx, w) {
   if (w._visible === false || !w.text) return;
+  ctx.save();
+  // Clip to widget bounds — ZeppOS clips text at the widget h boundary.
+  // This exposes descender overflow bugs (e.g. 'y' clipped when h ≈ text_size).
+  ctx.beginPath();
+  ctx.rect(w.x || 0, w.y || 0, w.w || 0, w.h || 0);
+  ctx.clip();
   ctx.fillStyle = hexColor(w.color);
   ctx.font = \`\${w.text_size || 30}px 'Noto Sans', system-ui, sans-serif\`;
   ctx.textBaseline = 'middle';
@@ -189,6 +195,7 @@ function drawText(ctx, w) {
     ctx.textAlign = 'center';
     ctx.fillText(String(w.text), (w.x || 0) + (w.w || 0) / 2, ty);
   }
+  ctx.restore();
 }
 
 function drawButton(ctx, w) {
