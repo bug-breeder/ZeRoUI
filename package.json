@@ -7,7 +7,8 @@
   "files": ["index.js", "src/"],
   "scripts": {
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "preview": "node --no-warnings --loader ./tools/loader.mjs ./tools/preview.mjs"
   },
   "keywords": ["zeppos", "zepp", "watch", "ui", "round", "oled"],
   "license": "MIT",
